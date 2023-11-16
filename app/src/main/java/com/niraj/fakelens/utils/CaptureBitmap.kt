@@ -18,14 +18,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.times
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.drawToBitmap
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.niraj.fakelens.handlers.UIEvent
 import com.niraj.fakelens.handlers.UIState
 import com.niraj.fakelens.ui.theme.robotoFamily
 import java.io.File
@@ -34,8 +34,7 @@ import java.io.FileOutputStream
 
 @Composable
 fun ImageWithText(
-    state: UIState,
-    onEvent: (UIEvent) -> Unit
+    state: UIState
 ) {
     val textList = remember  {
         mutableListOf<String>()
@@ -52,7 +51,6 @@ fun ImageWithText(
         }
 
         textList.add(state.date + " " + state.time)
-
 
         if(state.coordinates.isNotBlank()) {
             textList.add(state.coordinates)
@@ -84,22 +82,21 @@ fun ImageWithText(
             modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
         ) {
             textList.forEach {str ->
-                StrokeText(text = str)
+                StrokeText(text = str, state.fontSize * 1.sp)
             }
         }
     }
 }
 
-
-@Preview
 @Composable
 fun StrokeText(
-    text: String = "Hello Bois, How are you"
+    text: String = "Hello Bois, How are you",
+    fontSize: TextUnit
 ) {
     Box {
         Text(
             text = text,
-            fontSize = 14.sp,
+            fontSize = fontSize,
             color = Color.White,
             modifier = Modifier.align(Alignment.Center),
             fontFamily = robotoFamily

@@ -1,6 +1,5 @@
 package com.niraj.fakelens.viewmodel
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.niraj.fakelens.handlers.UIEvent
 import com.niraj.fakelens.handlers.UIState
@@ -73,6 +72,13 @@ class myViewModel: ViewModel() {
                 _state.update {
                     it.copy(
                         project = event.project
+                    )
+                }
+            }
+            is UIEvent.setFontSize -> {
+                _state.update {
+                    it.copy(
+                        fontSize = event.fontSize
                     )
                 }
             }

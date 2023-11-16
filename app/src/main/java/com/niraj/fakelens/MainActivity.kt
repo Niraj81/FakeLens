@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,6 +25,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -43,7 +45,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
-import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.niraj.fakelens.components.ImageView
 import com.niraj.fakelens.components.SaveDialog
 import com.niraj.fakelens.handlers.UIEvent
@@ -82,12 +83,11 @@ fun MainScreen(
     viewModel: myViewModel
 ) {
     val state by viewModel.state.collectAsState()
-    val dateDialogState = rememberSheetState()
 
     val scrollState = rememberScrollState()
 
     val snapshot = captureBitmap {
-        ImageWithText(state = state, onEvent = viewModel::onEvent)
+        ImageWithText(state = state)
     }
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -132,6 +132,7 @@ fun MainScreen(
         Column(
             modifier = Modifier
                 .padding(paddingValues)
+                .padding(start = 28.dp, end = 28.dp)
                 .verticalScroll(
                     state = scrollState,
                     enabled = true
@@ -161,6 +162,7 @@ fun MainScreen(
                 placeholder = {
                     Text("Company Name")
                 },
+                modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                 keyboardActions = KeyboardActions(
                     onNext = {
@@ -179,6 +181,7 @@ fun MainScreen(
                 placeholder = {
                     Text("Project")
                 },
+                modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                 keyboardActions = KeyboardActions(
                     onNext = {
@@ -205,6 +208,7 @@ fun MainScreen(
                 placeholder = {
                     Text("Coordinates")
                 },
+                modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                 keyboardActions = KeyboardActions(
                     onNext = {
@@ -223,15 +227,35 @@ fun MainScreen(
                 placeholder = {
                     Text("Address")
                 },
+                modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
                 keyboardActions = KeyboardActions(
                     onGo = {
                         localFocusManager.clearFocus()
-
                         showSaveDialog()
                     }
                 )
             )
+            Spacer(Modifier.height(20.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Slider(
+                    value = state.fontSize,
+                    onValueChange = {
+                        viewModel.onEvent(UIEvent.setFontSize(it))
+                    },
+                    valueRange = 10f..20f,
+                    modifier = Modifier.weight(0.8f)
+                )
+                Spacer(Modifier.weight(0.05f))
+                Text(
+                    text = state.fontSize.toString().take(4),
+                    modifier = Modifier.weight(0.15f)
+                )
+            }
             Spacer(Modifier.height(150.dp))
         }
     }
@@ -245,7 +269,6 @@ fun MainScreen(
         onSave = {
             scope.launch(Dispatchers.Default){
                 saveBitmapToFile(ctx, bmp!!)
-                // Toast.makeText(ctx, "Saved", Toast.LENGTH_SHORT).show()
                 dialogVisible = false
             }
         }

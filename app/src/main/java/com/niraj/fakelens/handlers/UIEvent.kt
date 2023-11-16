@@ -12,4 +12,5 @@ sealed interface UIEvent {
     data class setTime(val hour: Int, val minute: Int): UIEvent
     data class setCoordinates(val coordinates: String): UIEvent
     data class setAddress(val address: String): UIEvent
+    data class setFontSize(val fontSize: Float) : UIEvent
 }
