@@ -91,19 +91,25 @@ fun MainScreen(
     }
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
+    val localFocusManager = LocalFocusManager.current
 
     var dialogVisible by remember {
         mutableStateOf(false)
     }
+
     var bmp by remember {
         mutableStateOf<Bitmap?>(null)
     }
-    val localFocusManager = LocalFocusManager.current
+
     fun showSaveDialog() {
-        val snap = snapshot.invoke()
-        bmp = cropTransparentPixels(snap)
+        bmp = null
+        scope.launch (Dispatchers.Default){
+            val snap = snapshot.invoke()
+            bmp = cropTransparentPixels(snap)
+        }
         dialogVisible = true
     }
+
     Scaffold (
         topBar = {
             TopAppBar(

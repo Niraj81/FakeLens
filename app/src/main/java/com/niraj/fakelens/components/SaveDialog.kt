@@ -1,7 +1,8 @@
 package com.niraj.fakelens.components
 
 import android.graphics.Bitmap
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -10,11 +11,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -28,17 +25,7 @@ fun SaveDialog(
     onDismissRequest: () -> Unit,
     onSave : () -> Unit
 ) {
-    var showImage by remember {
-        mutableStateOf(false)
-    }
-    LaunchedEffect(key1 = bmp) {
-        if(bmp != null) {
-            showImage = true
-        }
-    }
-
-
-    AnimatedVisibility(dialogVisible) {
+    if(dialogVisible) {
         AlertDialog(
             onDismissRequest = onDismissRequest,
             confirmButton = {
@@ -56,16 +43,21 @@ fun SaveDialog(
                 Text("Image Preview")
             },
             text = {
-                if(showImage) {
+                if(bmp != null) {
                     ZoomableAsyncImage(
-                        model = bmp!!,
+                        model = bmp,
                         contentDescription = null,
                         modifier = Modifier
                             .clip(RoundedCornerShape(CornerSize(20.dp))),
                         contentScale = ContentScale.Crop
                     )
                 } else {
-                    CircularProgressIndicator()
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
             }
         )
